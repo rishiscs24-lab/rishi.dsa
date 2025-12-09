@@ -16,18 +16,14 @@ void push(struct node **head_ref, int new_data) {
 void append(struct node **head_ref, int new_data) {
     struct node *new_node = (struct node*)malloc(sizeof(struct node));
     struct node *last = *head_ref;
-
     new_node->data = new_data;
     new_node->next = NULL;
-
     if (*head_ref == NULL) {
         *head_ref = new_node;
         return;
     }
-
     while (last->next != NULL)
         last = last->next;
-
     last->next = new_node;
 }
 
@@ -42,18 +38,14 @@ void deleteFirst(struct node **head_ref) {
 void deleteLast(struct node **head_ref) {
     if (*head_ref == NULL)
         return;
-
     struct node *temp = *head_ref;
-
     if (temp->next == NULL) {
         free(temp);
         *head_ref = NULL;
         return;
     }
-
     while (temp->next->next != NULL)
         temp = temp->next;
-
     free(temp->next);
     temp->next = NULL;
 }
@@ -61,23 +53,55 @@ void deleteLast(struct node **head_ref) {
 void deleteSpecific(struct node **head_ref, int key) {
     struct node *temp = *head_ref;
     struct node *prev = NULL;
-
     if (temp != NULL && temp->data == key) {
         *head_ref = temp->next;
         free(temp);
         return;
     }
-
     while (temp != NULL && temp->data != key) {
         prev = temp;
         temp = temp->next;
     }
-
     if (temp == NULL)
         return;
-
     prev->next = temp->next;
     free(temp);
+}
+
+void sortList(struct node **head_ref) {
+    struct node *i, *j;
+    int t;
+    if (*head_ref == NULL)
+        return;
+    for (i = *head_ref; i->next != NULL; i = i->next)
+        for (j = i->next; j != NULL; j = j->next)
+            if (i->data > j->data) {
+                t = i->data;
+                i->data = j->data;
+                j->data = t;
+            }
+}
+
+void reverseList(struct node **head_ref) {
+    struct node *prev = NULL, *curr = *head_ref, *next = NULL;
+    while (curr != NULL) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    *head_ref = prev;
+}
+
+void concatenate(struct node **head1, struct node **head2) {
+    if (*head1 == NULL) {
+        *head1 = *head2;
+        return;
+    }
+    struct node *temp = *head1;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = *head2;
 }
 
 void printlist(struct node *node) {
@@ -89,27 +113,34 @@ void printlist(struct node *node) {
 
 int main() {
     struct node *head = NULL;
+    struct node *head2 = NULL;
 
     append(&head, 6);
     push(&head, 7);
     push(&head, 1);
     append(&head, 4);
 
-    printf("\nCreated linked list: ");
+    append(&head2, 10);
+    append(&head2, 2);
+    append(&head2, 30);
+
+    printf("\nList 1: ");
     printlist(head);
 
-    deleteFirst(&head);
-    printf("\nAfter deleting first: ");
+    printf("\nList 2: ");
+    printlist(head2);
+
+    sortList(&head);
+    printf("\nSorted List 1: ");
     printlist(head);
 
-    deleteLast(&head);
-    printf("\nAfter deleting last: ");
+    reverseList(&head);
+    printf("\nReversed List 1: ");
     printlist(head);
 
-    deleteSpecific(&head, 7);
-    printf("\nAfter deleting 7: ");
+    concatenate(&head, &head2);
+    printf("\nConcatenated List: ");
     printlist(head);
 
     return 0;
 }
-
