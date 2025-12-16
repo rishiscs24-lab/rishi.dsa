@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node *prev;
+    struct node *next;
+};
+
+struct node *head = NULL;
+
+void insert(int item)
+{
+    struct node *ptr = (struct node *)malloc(sizeof(struct node));
+    ptr->data = item;
+    ptr->prev = NULL;
+    ptr->next = head;
+
+    if (head != NULL)
+        head->prev = ptr;
+
+    head = ptr;
+}
+
+void insert_left(int key, int item)
+{
+    struct node *ptr = head;
+    struct node *newnode;
+
+    if (head == NULL)
+        return;
+
+    if (head->data == key)
+    {
+        insert(item);
+        return;
+    }
+
+    while (ptr != NULL && ptr->data != key)
+        ptr = ptr->next;
+
+    if (ptr != NULL)
+    {
+        newnode = (struct node *)malloc(sizeof(struct node));
+        newnode->data = item;
+        newnode->prev = ptr->prev;
+        newnode->next = ptr;
+        ptr->prev->next = newnode;
+        ptr->prev = newnode;
+    }
+}
+
+void delete(int item)
+{
+    struct node *ptr = head;
+
+    if (head == NULL)
+        return;
+
+    if (head->data == item)
+    {
+        head = head->next;
+        if (head != NULL)
+            head->prev = NULL;
+        free(ptr);
+        return;
+    }
+
+    while (ptr != NULL && ptr->data != item)
+        ptr = ptr->next;
+
+    if (ptr != NULL)
+    {
+        ptr->prev->next = ptr->next;
+        if (ptr->next != NULL)
+            ptr->next->prev = ptr->prev;
+        free(ptr);
+    }
+}
+
+void display()
+{
+    struct node *ptr = head;
+    while (ptr != NULL)
+    {
+        printf("%d <-> ", ptr->data);
+        ptr = ptr->next;
+    }
+    printf("NULL\n");
+}
+
+int main()
+{
+    insert(30);
+    insert(20);
+    insert(10);
+
+    display();
+
+    insert_left(20, 15);
+    display();
+
+    delete(30);
+    display();
+
+    return 0;
+}
+
+
+
+O/P:-
+10 <-> 20 <-> 30 <-> NULL
+10 <-> 15 <-> 20 <-> 30 <-> NULL
+10 <-> 15 <-> 20 <-> NULL
