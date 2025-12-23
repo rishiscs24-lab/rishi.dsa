@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+int a[10][10], visited[10], n;
+
+void dfs(int v)
+{
+    visited[v] = 1;
+    for (int i = 1; i <= n; i++)
+    {
+        if (a[v][i] == 1 && visited[i] == 0)
+            dfs(i);
+    }
+}
+
+int main()
+{
+    int start, connected = 1;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter adjacency matrix:\n");
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            scanf("%d", &a[i][j]);
+
+    for (int i = 1; i <= n; i++)
+        visited[i] = 0;
+
+    start = 1;
+    dfs(start);
+
+    for (int i = 1; i <= n; i++)
+    {
+        if (visited[i] == 0)
+        {
+            connected = 0;
+            break;
+        }
+    }
+
+    if (connected)
+        printf("Graph is Connected");
+    else
+        printf("Graph is Not Connected");
+
+    return 0;
+}
+
+
+o/p:-
+Enter adjacency matrix:
+0 0 0 1
+1 0 0 0
+1 1 0 0
+Graph is Not Connected
